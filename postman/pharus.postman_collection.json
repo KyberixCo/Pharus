@@ -1,0 +1,511 @@
+{
+	"info": {
+		"_postman_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+		"name": "Pharus API Collection",
+		"description": "Colección completa de pruebas automatizadas para Pharus Deep Research Engine API (HTTP, UDS y MCP Stateless)",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Health & Diagnostics",
+			"item": [
+				{
+					"name": "Get Health Status",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test('Response contains service name and status ok', function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.service).to.eql('pharus-daemon');",
+									"    pm.expect(jsonData.status).to.eql('ok');",
+									"    pm.expect(jsonData.uptime).to.exist;",
+									"    pm.expect(jsonData.time).to.exist;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/health",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"health"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get System Status",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test('Response status is running and vector_db is chromem-go', function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.status).to.eql('running');",
+									"    pm.expect(jsonData.vector_db).to.eql('chromem-go');",
+									"    pm.expect(jsonData.minimax_model).to.exist;",
+									"    pm.expect(jsonData.embed_provider).to.exist;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/status",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"status"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Deep Research",
+			"item": [
+				{
+					"name": "Deep Research - Valid Topic",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test('Response contains status, research_id and elapsed time', function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.status).to.be.a('string');",
+									"    pm.expect(jsonData.research_id).to.be.a('string');",
+									"    pm.expect(jsonData.elapsed).to.exist;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-Pharus-Token",
+								"value": "{{token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"topic\": \"Resumen rápido de física cuántica\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/research",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"research"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Deep Research - Missing Topic (400)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 400 Bad Request', function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"pm.test('Error message is invalid request, topic required', function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.error).to.eql('invalid request, topic required');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-Pharus-Token",
+								"value": "{{token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/research",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"research"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Deep Research - Method Not Allowed (405)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 405 Method Not Allowed', function () {",
+									"    pm.response.to.have.status(405);",
+									"});",
+									"pm.test('Error message is method not allowed', function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.error).to.eql('method not allowed');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-Pharus-Token",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/research",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"research"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Deep Research - Unauthorized Token (401)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 401 Unauthorized', function () {",
+									"    pm.response.to.have.status(401);",
+									"});",
+									"pm.test('Error message is unauthorized', function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.error).to.eql('unauthorized');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-Pharus-Token",
+								"value": "token_invalido_xyz",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"topic\": \"Prueba con token invalido\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/research",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"research"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Model Context Protocol (MCP)",
+			"item": [
+				{
+					"name": "MCP Initialize Protocol",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200 OK', function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-Pharus-Token",
+								"value": "{{token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json, text/event-stream",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"jsonrpc\": \"2.0\",\n  \"id\": 1,\n  \"method\": \"initialize\",\n  \"params\": {\n    \"protocolVersion\": \"2024-11-05\",\n    \"capabilities\": {},\n    \"clientInfo\": {\n      \"name\": \"Postman Test Client\",\n      \"version\": \"1.0.0\"\n    }\n  }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/mcp",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"mcp"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "MCP List Tools",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200 OK', function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-Pharus-Token",
+								"value": "{{token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json, text/event-stream",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"jsonrpc\": \"2.0\",\n  \"id\": 2,\n  \"method\": \"tools/list\",\n  \"params\": {}\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/mcp",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"mcp"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "MCP List Resources",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200 OK', function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-Pharus-Token",
+								"value": "{{token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json, text/event-stream",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"jsonrpc\": \"2.0\",\n  \"id\": 3,\n  \"method\": \"resources/list\",\n  \"params\": {}\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/mcp",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"mcp"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "MCP Subscriptions SSE Listen",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200 OK', function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-Pharus-Token",
+								"value": "{{token}}",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "text/event-stream",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/mcp/subscriptions/listen",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"mcp",
+								"subscriptions",
+								"listen"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

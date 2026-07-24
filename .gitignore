@@ -1,0 +1,15 @@
+# Environment variables & secrets
+.env
+
+# Build outputs & temporaries
+bin/
+tmp/
+logs/
+vectors/
+build-errors.log
+
+# Mac OS metadata
+.DS_Store
+
+pharus
+!/cmd/pharus
